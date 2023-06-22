@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="purple_200">#FFBB86FC</color>
+    <color name="purple_500">#FF6200EE</color>
+    <color name="purple_700">#FF3700B3</color>
+    <color name="teal_200">#FF03DAC5</color>
+    <color name="teal_700">#FF018786</color>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+
+    <color name="transparent">#00000000</color>
+
+    <color name="tomorrow_night_foreground">#FFC5C8C6</color>
+    <color name="tomorrow_night_background">#FF1D1F21</color>
+    <color name="tomorrow_night_selection">#FF373B41</color>
+    <color name="tomorrow_night_line">#FF282A2E</color>
+    <color name="tomorrow_night_comment">#FF969896</color>
+    <color name="tomorrow_night_red">#FFCC6666</color>
+    <color name="tomorrow_night_orange">#FFDE935F</color>
+    <color name="tomorrow_night_yellow">#FFF0C674</color>
+    <color name="tomorrow_night_green">#FFB5BD68</color>
+    <color name="tomorrow_night_aqua">#FF8ABEB7</color>
+    <color name="tomorrow_night_blue">#FF81A2BE</color>
+    <color name="tomorrow_night_purple">#FFB294BB</color>
+    <color name="tomorrow_night_window">#FF4D5057</color>
+
+
+    <color name="tomorrow_foreground">#FFC5C8C6</color>
+    <color name="tomorrow_background">#FF1D1F21</color>
+    <color name="tomorrow_selection">#FF373B41</color>
+    <color name="tomorrow_line">#FF282A2E</color>
+    <color name="tomorrow_comment">#FF969896</color>
+    <color name="tomorrow_red">#FFCC6666</color>
+    <color name="tomorrow_orange">#FFDE935F</color>
+    <color name="tomorrow_yellow">#FFF0C674</color>
+    <color name="tomorrow_green">#FFB5BD68</color>
+    <color name="tomorrow_aqua">#FF8ABEB7</color>
+    <color name="tomorrow_blue">#FF81A2BE</color>
+    <color name="tomorrow_purple">#FFB294BB</color>
+    <color name="tomorrow_window">#FF4D5057</color>
+</resources>

@@ -1,0 +1,32 @@
+<resources>
+    <!-- Base application theme. -->
+    <style name="Theme.TomorrowNight" parent="Theme.MaterialComponents.DayNight">
+        <item name="android:windowBackground">@color/tomorrow_night_background</item>
+        <item name="android:colorBackground">@color/tomorrow_night_background</item>
+        <item name="android:colorForeground">@color/tomorrow_night_foreground</item>
+        <item name="android:colorPrimary">@color/tomorrow_night_window</item>
+        <item name="android:colorPrimaryDark">@color/tomorrow_night_line</item>
+        <item name="android:colorAccent">@color/tomorrow_night_purple</item>
+        <item name="android:textColorPrimary">@color/tomorrow_night_foreground</item>
+        <item name="android:textColorHighlight">@color/tomorrow_night_blue</item>
+        <item name="android:textColor">@color/tomorrow_night_comment</item>
+
+        <item name="android:toolbarStyle">@style/Theme.TomorrowNight.Toolbar</item>
+        <item name="cardViewStyle">@style/Theme.TomorrowNight.CatalogCard</item>
+        <item name="alertDialogStyle">@style/Theme.TomorrowNight.Dialog</item>
+    </style>
+
+    <style name="Theme.TomorrowNight.Toolbar" parent="@style/Theme.TomorrowNight">
+        <item name="android:background">@color/tomorrow_night_line</item>
+    </style>
+
+    <style name="Theme.TomorrowNight.CatalogCard" parent="Theme.TomorrowNight">
+        <item name="cardBackgroundColor">@color/tomorrow_night_line</item>
+        <item name="android:textColorPrimary">@color/tomorrow_night_comment</item>
+        <item name="android:textColor">@color/tomorrow_night_foreground</item>
+    </style>
+
+    <style name="Theme.TomorrowNight.Dialog" parent="Theme.TomorrowNight">
+        <item name="backgroundColor">@color/transparent</item>
+    </style>
+</resources>
