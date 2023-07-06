@@ -1,6 +1,7 @@
 <resources>
     <!-- Base application theme. -->
     <style name="Theme.Cawfee" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
+        <item name="android:windowActionBar">false</item>
         <!-- Primary brand color. -->
         <item name="colorPrimary">@color/purple_200</item>
         <item name="colorPrimaryVariant">@color/purple_700</item>

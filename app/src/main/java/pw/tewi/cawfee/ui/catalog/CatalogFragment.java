@@ -8,11 +8,11 @@ import android.widget.GridView;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -23,6 +23,7 @@ import io.reactivex.rxjava3.disposables.CompositeDisposable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 import lombok.NonNull;
 import pw.tewi.cawfee.databinding.FragmentCatalogBinding;
+import pw.tewi.cawfee.models.Catalog;
 
 
 /**
@@ -32,12 +33,13 @@ import pw.tewi.cawfee.databinding.FragmentCatalogBinding;
 public final class CatalogFragment extends Fragment {
     private final CompositeDisposable disposable = new CompositeDisposable();
 
-    @Inject CatalogAdapter adapter;
-    private GridView gridView;
+    @Inject CatalogAdapter   adapter;
     private CatalogViewModel viewModel;
 
     private FragmentCatalogBinding binding;
-    private SwipeRefreshLayout layout;
+    private GridView               gridView;
+    private SwipeRefreshLayout     layout;
+
 
     @Override
     public View onCreateView(
@@ -45,19 +47,18 @@ public final class CatalogFragment extends Fragment {
         @Nullable ViewGroup container,
         @Nullable Bundle savedInstanceState) {
 
-        binding = FragmentCatalogBinding.inflate(inflater, container, false);
+        binding  = FragmentCatalogBinding.inflate(inflater, container, false);
         gridView = binding.catalogGridView;
-        layout = binding.catalogLayout;
+        layout   = binding.catalogLayout;
 
         layout.setOnChildScrollUpCallback((__, ___) -> detectRefresh());
         layout.setOnRefreshListener(this::refreshCatalog);
 
-        // track changes in the view's size
+        // Update the adapter's dimensions when the screen changes size
         gridView.getViewTreeObserver()
-                .addOnGlobalLayoutListener(() -> {
-                    adapter.gridWidth(gridView.getWidth())
-                           .gridHeight(gridView.getHeight());
-                });
+                .addOnGlobalLayoutListener(
+                    () -> adapter.gridWidth(gridView.getWidth())
+                                 .gridHeight(gridView.getHeight()));
 
         return binding.getRoot();
     }
@@ -92,24 +93,30 @@ public final class CatalogFragment extends Fragment {
     }
 
     /**
-     * Fires on a screen pull-down
+     * Update the catalog if it has changed
      */
     public void refreshCatalog() {
         layout.setRefreshing(true);
 
         disposable.add(
-            Observable
-                .defer(() -> Observable.just(viewModel.fetCatalogData()))
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(liveData -> {
-                    adapter.clear();
-                    adapter.addAll(liveData.getValue()
-                                           .stream()
-                                           .flatMap(p -> p.getThreads().stream())
-                                           .collect(Collectors.toList()));
+            Observable.defer(() -> Observable.just(viewModel.fetCatalogData()))
+                      .subscribeOn(Schedulers.io())
+                      .observeOn(AndroidSchedulers.mainThread())
+                      .subscribe(this::updateCatalog));
+    }
 
-                    layout.setRefreshing(false);
-                }));
+    /**
+     * Replace posts in catalog with new data
+     *
+     * @param liveData LiveData containing the new catalog state
+     */
+    private void updateCatalog(LiveData<Catalog> liveData) {
+        Optional.ofNullable(liveData.getValue())
+                .ifPresent(catalog -> {
+                    adapter.clear();
+                    adapter.addAll(catalog.flattenedPosts());
+                });
+
+        layout.setRefreshing(false);
     }
 }

@@ -37,16 +37,58 @@ public abstract class ChanImageBoard implements ImageBoard {
     @NonNull private final String staticEndpoint;
 
     @NonNull @Getter(onMethod=@__(@Override)) private final String name;
-    @NonNull @Getter(AccessLevel.NONE) private final Gson gson;
+    @NonNull @Getter(AccessLevel.NONE) private final        Gson   gson;
 
-    private static Optional<String> get(@NonNull final String uri) {
+
+    @Override
+    public Optional<BoardList> boards() {
+        var ret = fetchClass(BoardList.class, createApiUrl("boards"));
+
+        ret.ifPresent(
+            boardList -> boardList.getBoards()
+                                  .forEach(board -> board.setSite(name)));
+
+        return fetchClass(BoardList.class, createApiUrl("boards"));
+    }
+
+    @Override
+    public Optional<Catalog> catalog(@NonNull final String boardName) {
+        var maybeCatalog = fetchClass(Catalog.class, createApiUrl(boardName, "catalog"));
+
+        maybeCatalog.ifPresent(catalog -> {
+            catalog.stream()
+                   .flatMap(page -> page.getThreads().stream())
+                   .forEach(post -> setImageUrls(post, boardName));
+        });
+
+        return maybeCatalog;
+    }
+
+    @Override
+    public Optional<ThreadList> threads(@NonNull final String boardName) {
+        return fetchClass(ThreadList.class, createApiUrl(boardName, "threads"));
+    }
+
+    @Override
+    public Optional<Thread> thread(@NonNull final String boardName, @NonNull final String threadNo) {
+
+        var maybeThread = fetchClass(Thread.class, createUrl(apiEndpoint, boardName, "thread", threadNo + ".json"));
+
+        maybeThread.ifPresent(
+            thread -> thread.getPosts()
+                            .forEach(post -> setImageUrls(post, boardName)));
+
+        return maybeThread;
+    }
+
+    private Optional<String> get(@NonNull final String uri) {
         try {
             var connection = (HttpURLConnection) new URL(uri).openConnection();
             connection.setRequestMethod("GET");
 
             var response = new BufferedReader(new InputStreamReader(connection.getInputStream()))
-                          .lines()
-                          .collect(Collectors.joining());
+                               .lines()
+                               .collect(Collectors.joining());
 
             connection.disconnect();
             Log.d("ImageBoard::get", "Recieved response " + response);
@@ -60,29 +102,7 @@ public abstract class ChanImageBoard implements ImageBoard {
         }
     }
 
-
-    @NonNull private String createUrl(@NonNull final String... path) {
-        return String.join("/", path);
-    }
-
-    @NonNull private String createApiUrl(@NonNull final String... path) {
-        return apiEndpoint + "/" + createUrl(path) + ".json";
-    }
-
-    private void setPostUrls(@NonNull Post post, final String boardName) {
-        var ext = post.getExt();
-
-        if (ext == null) { return; }
-
-        var partialImageUrl = createUrl(imageEndpoint, boardName, Long.toString(post.getTim()));
-        post.setImageUrl(partialImageUrl + ext);
-        post.setThumbnailUrl(partialImageUrl + "s.jpg");
-    }
-
-    private <T> Optional<T> fetchClass(
-        @NonNull final Class<T> classType,
-        @NonNull final String url) {
-
+    private <T> Optional<T> fetchClass(@NonNull final Class<T> classType, @NonNull final String url) {
         try {
             return get(url).map(response -> gson.fromJson(response, classType));
 
@@ -93,41 +113,21 @@ public abstract class ChanImageBoard implements ImageBoard {
         }
     }
 
-    @Override
-    public Optional<BoardList> boards() {
-        return fetchClass(BoardList.class, createApiUrl("boards"));
+    private String createApiUrl(@NonNull final String... path) {
+        return apiEndpoint + "/" + createUrl(path) + ".json";
     }
 
-    @Override
-    public Optional<Catalog> catalog(@NonNull final String boardName) {
-        var maybeCatalog = fetchClass(Catalog.class, createApiUrl(boardName, "catalog"));
-
-        maybeCatalog.ifPresent(catalog -> {
-            catalog.stream()
-                   .flatMap(page -> page.getThreads().stream())
-                   .forEach(post -> setPostUrls(post, boardName));
-        });
-
-        return maybeCatalog;
+    private String createUrl(@NonNull final String... path) {
+        return String.join("/", path);
     }
 
-    @Override
-    public Optional<ThreadList> threads(@NonNull final String boardName) {
-        return fetchClass(ThreadList.class, createApiUrl(boardName, "threads"));
-    }
+    private void setImageUrls(@NonNull Post post, @NonNull final String boardName) {
+        var ext = post.getExt();
 
-    @Override
-    public Optional<Thread> thread(
-        @NonNull final String boardName,
-        @NonNull final String threadNo) {
+        if (ext == null) { return; }
 
-        var maybeThread = fetchClass(Thread.class, createUrl(apiEndpoint, boardName, "thread", threadNo + ".json"));
-
-        maybeThread.ifPresent(thread -> {
-            thread.getPosts()
-                  .forEach(post -> setPostUrls(post, boardName));
-        });
-
-        return maybeThread;
+        var partialImageUrl = createUrl(imageEndpoint, boardName, Long.toString(post.getTim()));
+        post.setImageUrl(partialImageUrl + ext);
+        post.setThumbnailUrl(partialImageUrl + "s.jpg");
     }
 }

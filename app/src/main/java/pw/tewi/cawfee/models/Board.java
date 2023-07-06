@@ -1,5 +1,6 @@
 package pw.tewi.cawfee.models;
 
+import androidx.annotation.NonNull;
 import androidx.room.Embedded;
 import androidx.room.Entity;
 import androidx.room.Ignore;
@@ -34,10 +35,12 @@ import pw.tewi.cawfee.hilt.components.DaggerGsonComponent;
 public final class Board {
     @Ignore private static final Gson gson = DaggerGsonComponent.create().gson();
 
-    String meta_description;
-    @PrimaryKey
-    private String board;
+    @PrimaryKey @NonNull private String board;
+
+    private String site;
+    private String meta_description;
     private String title;
+
     private int ws_board;
     private int per_page;
     private int pages;
@@ -47,11 +50,15 @@ public final class Board {
     private int max_webm_duration;
     private int bump_limit;
     private int image_limit;
+
     @Embedded(prefix="cooldown_") private Cooldowns cooldowns;
+
     private int spoilers;
     private int custom_spoilers;
     private int is_archived;
+
     @TypeConverters(BoardFlagsConverter.class) private Map<String, String> board_flags;
+
     private int country_flags;
     private int user_ids;
     private int oekaki;
@@ -64,6 +71,8 @@ public final class Board {
     private int require_subject;
     private int min_image_width;
     private int min_image_height;
+
+    @NonNull @Ignore @Override public String toString() { return board; }
 
     @Getter
     @Setter

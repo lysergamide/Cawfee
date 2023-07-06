@@ -19,7 +19,6 @@ public interface ImageBoard {
      * @return optional containing a BoardList on a successful request or an empty optional on failure
      */
     Optional<BoardList> boards();
-
     /**
      * Get a boards catalog. Includes all OPs and their preview replies.
      *
@@ -27,7 +26,6 @@ public interface ImageBoard {
      * @return optional containing a Catalog on a successful request or an empty optional on failure
      */
     Optional<Catalog> catalog(@NonNull final String boardName);
-
     /**
      * A summarized list of all threads on a board including thread numbers,
      * their modification time and reply count.
@@ -36,7 +34,6 @@ public interface ImageBoard {
      * @return optional containing a ThreadList on a successful request or an empty optional on failure
      */
     Optional<ThreadList> threads(@NonNull final String boardName);
-
     /**
      * A full list of posts in a single thread.
      *
@@ -45,6 +42,5 @@ public interface ImageBoard {
      * @return optional containing a thread on a successful request or an empty optional on failure
      */
     Optional<Thread> thread(@NonNull final String boardName, @NonNull final String threadNo);
-
     String name();
 }

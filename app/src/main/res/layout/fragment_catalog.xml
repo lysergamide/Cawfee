@@ -22,4 +22,14 @@
             tools:listitem="@layout/fragment_catalog_card" />
     </FrameLayout>
 
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end|bottom"
+        android:layout_margin="16dp"
+        android:contentDescription="@string/new_thread_description"
+        android:src="@mipmap/ic_launcher_round" />
+
 </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

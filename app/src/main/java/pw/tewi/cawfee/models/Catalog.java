@@ -2,6 +2,7 @@ package pw.tewi.cawfee.models;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import lombok.Data;
 
@@ -15,6 +16,13 @@ import lombok.Data;
  * </a>
  */
 public final class Catalog extends ArrayList<Catalog.CatalogPage> {
+
+    /**
+     * @return All of the posts in the catalog as a simple list
+     */
+    public List<Post> flattenedPosts() {
+        return stream().flatMap(post -> post.getThreads().stream()).collect(Collectors.toList());
+    }
 
     @Data
     public static final class CatalogPage {

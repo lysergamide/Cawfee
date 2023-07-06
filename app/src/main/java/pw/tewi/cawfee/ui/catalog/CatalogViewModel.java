@@ -10,7 +10,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel;
 import lombok.NonNull;
 import pw.tewi.cawfee.api.ImageBoard;
 import pw.tewi.cawfee.models.Catalog;
-import pw.tewi.cawfee.preferences.PreferenceManager;
+import pw.tewi.cawfee.ui.preferences.CawfeePreferenceManager;
 
 
 /**
@@ -19,16 +19,17 @@ import pw.tewi.cawfee.preferences.PreferenceManager;
 @HiltViewModel
 public final class CatalogViewModel extends ViewModel {
     @NonNull private final MutableLiveData<Catalog> cachedCatalog = new MutableLiveData<>(new Catalog());
-    @NonNull private final ImageBoard imageBoard;
-    @NonNull private final PreferenceManager preferenceManager;
+    @NonNull private final ImageBoard              imageBoard;
+    @NonNull private final CawfeePreferenceManager cawfeePreferenceManager;
 
     @NonNull private String activeBoard;
 
+
     @Inject
-    public CatalogViewModel(@NonNull ImageBoard imageBoard, @NonNull PreferenceManager preferenceManager) {
-        this.imageBoard = imageBoard;
-        this.preferenceManager = preferenceManager;
-        activeBoard = preferenceManager.lastBoard();
+    public CatalogViewModel(@NonNull ImageBoard imageBoard, @NonNull CawfeePreferenceManager cawfeePreferenceManager) {
+        this.imageBoard              = imageBoard;
+        this.cawfeePreferenceManager = cawfeePreferenceManager;
+        this.activeBoard             = cawfeePreferenceManager.lastBoard();
     }
 
     /**
@@ -55,7 +56,7 @@ public final class CatalogViewModel extends ViewModel {
      */
     public CatalogViewModel activeBoard(String newBoard) {
         activeBoard = newBoard;
-        preferenceManager.lastBoard(activeBoard);
+        cawfeePreferenceManager.lastBoard(activeBoard);
 
         return this;
     }

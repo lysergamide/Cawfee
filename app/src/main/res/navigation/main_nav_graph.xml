@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/nav_activity_main">
+
+    <!--
+    <activity
+        android:id="@+id/nav_main_activity"
+        android:name="pw.tewi.cawfee.ui.MainActivity"
+        android:label="activity_main"
+        tools:layout="@layout/activity_main" />
+        -->
+    <fragment
+        android:id="@+id/nav_activity_main"
+        android:name="pw.tewi.cawfee.ui.catalog.CatalogFragment"
+        android:label="Catalog" />
+
+    <!--
+    <fragment
+        android:id="@+id/nav_website_settings"
+        android:name="pw.tewi.cawfee.ui.Preferences.SitePreferencesActivity$PreferenceFragment"
+        android:label="@string/site_settings" />
+
+        -->
+</navigation>

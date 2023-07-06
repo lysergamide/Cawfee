@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_main"
     android:layout_width="match_parent"
@@ -9,24 +10,32 @@
     tools:context=".ui.MainActivity">
 
     <androidx.fragment.app.FragmentContainerView
-        android:id="@+id/activity_main_dialog_container"
-        android:name="pw.tewi.cawfee.ui.imagedialog.ImageDialogFragment"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true" />
+        android:id="@+id/activity_main_nav_host"
+        android:name="androidx.navigation.fragment.NavHostFragment"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:defaultNavHost="true"
+        app:navGraph="@navigation/main_nav_graph" />
 
-    <Toolbar
+    <androidx.appcompat.widget.Toolbar
         android:id="@+id/activity_main_toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:layout_alignParentTop="true"
-        android:elevation="4dp" />
+        android:elevation="4dp">
+
+        <Spinner
+            android:id="@+id/activity_main_toolbar_spinner"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent" />
+    </androidx.appcompat.widget.Toolbar>
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/activity_main_catalog_container"
         android:name="pw.tewi.cawfee.ui.catalog.CatalogFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/activity_main_toolbar" />
+        android:layout_below="@id/activity_main_toolbar"
+        tools:layout="@layout/fragment_catalog" />
 
 </RelativeLayout>

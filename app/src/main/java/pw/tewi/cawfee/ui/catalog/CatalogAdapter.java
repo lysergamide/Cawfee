@@ -40,10 +40,11 @@ import pw.tewi.cawfee.models.Post;
 @Accessors(fluent=true)
 public final class CatalogAdapter extends ArrayAdapter<Post> {
     private static final double CARD_ASPECT_RATIO = 16.0 / 10.0;
-    private static final double IMAGE_SIZE_RATIO = 0.5;
+    private static final double IMAGE_SIZE_RATIO  = 0.5;
 
     @Getter @Setter private int gridWidth;
     @Getter @Setter private int gridHeight;
+
 
     /**
      * Construct a new CatalogAdapter
@@ -71,13 +72,13 @@ public final class CatalogAdapter extends ArrayAdapter<Post> {
         }
 
         var holder = (ViewHolder) cardView.getTag();
-        var post = getItem(position);
+        var post   = getItem(position);
 
         // Image thumbnail set up
-        var cvParams = cardView.getLayoutParams();
+        var cvParams  = cardView.getLayoutParams();
         var imgParams = holder.image.getLayoutParams();
 
-        cvParams.height = (int) (((GridView) parent).getColumnWidth() * CARD_ASPECT_RATIO);
+        cvParams.height  = (int) (((GridView) parent).getColumnWidth() * CARD_ASPECT_RATIO);
         imgParams.height = (int) (cvParams.height * IMAGE_SIZE_RATIO);
 
         cardView.setLayoutParams(cvParams);
@@ -110,9 +111,9 @@ public final class CatalogAdapter extends ArrayAdapter<Post> {
      * @param url The url of the image to display
      */
     public void showImageDialog(String url) {
-        var layout = new FrameLayout(getContext());
+        var layout    = new FrameLayout(getContext());
         var imageView = new ImageView(getContext());
-        var dialog = new AlertDialog.Builder(getContext()).create();
+        var dialog    = new AlertDialog.Builder(getContext()).create();
 
         imageView.setLayoutParams(
             new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
@@ -132,7 +133,7 @@ public final class CatalogAdapter extends ArrayAdapter<Post> {
     @RequiredArgsConstructor
     private static class ViewHolder {
         final ImageView image;
-        final TextView subject;
-        final TextView comment;
+        final TextView  subject;
+        final TextView  comment;
     }
 }
