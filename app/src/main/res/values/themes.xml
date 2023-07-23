@@ -22,7 +22,7 @@
         <item name="android:background">@color/tomorrow_night_line</item>
     </style>
 
-    <style name="Theme.TomorrowNight.CatalogCard" parent="Theme.TomorrowNight">
+    <style name="Theme.TomorrowNight.CatalogCard" parent="@style/Theme.TomorrowNight">
         <item name="cardBackgroundColor">@color/tomorrow_night_line</item>
         <item name="android:textColorPrimary">@color/tomorrow_night_comment</item>
         <item name="android:textColor">@color/tomorrow_night_foreground</item>
