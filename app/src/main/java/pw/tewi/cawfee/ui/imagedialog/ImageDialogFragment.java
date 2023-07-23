@@ -1,33 +1,48 @@
 package pw.tewi.cawfee.ui.imagedialog;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
+import androidx.fragment.app.DialogFragment;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.Accessors;
 import pw.tewi.cawfee.R;
+import pw.tewi.cawfee.databinding.FragmentImageDialogBinding;
+import pw.tewi.cawfee.models.Post;
 
-public class ImageDialogFragment extends Fragment {
+@Accessors(fluent = true)
+@RequiredArgsConstructor(access=AccessLevel.PRIVATE)
+public class ImageDialogFragment extends DialogFragment {
 
-    private ImageDialogViewModel viewModel;
+    @NonNull private final String imageUrl;
 
-    @Override
-    public View onCreateView(
-        @NonNull LayoutInflater inflater,
-        @Nullable ViewGroup container,
-        @Nullable Bundle savedInstanceState) {
-
-        return inflater.inflate(R.layout.fragment_image_dialog, container, false);
+    public static ImageDialogFragment from(@NonNull Post post) {
+        return new ImageDialogFragment(post.getImageUrl());
     }
 
+    @NonNull
     @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        viewModel = new ViewModelProvider(this).get(ImageDialogViewModel.class);
+    public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
+        var dialog = new AlertDialog.Builder(requireContext(), android.R.style.ThemeOverlay).create();
+        var binding = FragmentImageDialogBinding.inflate(getLayoutInflater());
+
+        Glide.with(requireContext())
+            .load(imageUrl)
+            .centerInside()
+            .diskCacheStrategy(DiskCacheStrategy.NONE)
+            .into(binding.image);
+
+        dialog.setView(binding.getRoot());
+        dialog.getWindow().setBackgroundDrawableResource(R.color.transparent_black);
+
+        return dialog;
     }
 }

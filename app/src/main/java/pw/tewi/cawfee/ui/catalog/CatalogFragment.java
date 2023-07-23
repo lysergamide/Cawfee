@@ -36,10 +36,8 @@ public final class CatalogFragment extends Fragment {
     @Inject CatalogAdapter   adapter;
     private CatalogViewModel viewModel;
 
-    private FragmentCatalogBinding binding;
     private GridView               gridView;
     private SwipeRefreshLayout     layout;
-
 
     @Override
     public View onCreateView(
@@ -47,8 +45,8 @@ public final class CatalogFragment extends Fragment {
         @Nullable ViewGroup container,
         @Nullable Bundle savedInstanceState) {
 
-        binding  = FragmentCatalogBinding.inflate(inflater, container, false);
-        gridView = binding.catalogGridView;
+        var binding  = FragmentCatalogBinding.inflate(inflater, container, false);
+        gridView = binding.gridView;
         layout   = binding.catalogLayout;
 
         layout.setOnChildScrollUpCallback((__, ___) -> detectRefresh());
@@ -60,20 +58,21 @@ public final class CatalogFragment extends Fragment {
                     () -> adapter.gridWidth(gridView.getWidth())
                                  .gridHeight(gridView.getHeight()));
 
+        gridView.setAdapter(adapter);
         return binding.getRoot();
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        viewModel = new ViewModelProvider(this).get(CatalogViewModel.class);
+        viewModel = new ViewModelProvider(this).get(CatalogViewModel.class).activeBoard("g");
+        refreshCatalog();
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
         disposable.dispose();
-        binding = null;
     }
 
     /**

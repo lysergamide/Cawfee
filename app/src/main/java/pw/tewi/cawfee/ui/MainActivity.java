@@ -14,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.room.Room;
 
+import java.util.List;
 import java.util.stream.Collectors;
 
 import dagger.hilt.android.AndroidEntryPoint;
@@ -23,7 +24,9 @@ import io.reactivex.rxjava3.schedulers.Schedulers;
 import pw.tewi.cawfee.R;
 import pw.tewi.cawfee.databinding.ActivityMainBinding;
 import pw.tewi.cawfee.db.CawfeeDatabase;
+import pw.tewi.cawfee.hilt.components.DaggerImageBoardMap;
 import pw.tewi.cawfee.models.Board;
+import pw.tewi.cawfee.models.BoardList;
 import pw.tewi.cawfee.ui.preferences.ChanPreferenceManager;
 import pw.tewi.cawfee.ui.preferences.sitepreferences.SitePreferencesActivity;
 
@@ -36,14 +39,14 @@ public final class MainActivity extends AppCompatActivity {
     private final CompositeDisposable disposable = new CompositeDisposable();
 
     ActivityMainBinding binding;
-    Toolbar             toolbar;
+    Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
-        toolbar = binding.activityMainToolbar;
+        toolbar = binding.toolbar;
 
         setSupportActionBar(toolbar);
         setContentView(binding.getRoot());
@@ -54,33 +57,35 @@ public final class MainActivity extends AppCompatActivity {
         toolbar.inflateMenu(R.menu.menu_main);
         toolbar.setTitle(new ChanPreferenceManager(this).lastBoard());
 
-        final var boardDao = Room.databaseBuilder(this, CawfeeDatabase.class, "boards").build().boardDao();
-        final var spinner = (Spinner) binding.activityMainToolbar.findViewById(R.id.activity_main_toolbar_spinner);
-        final var adapter = new ArrayAdapter<String>(this, support_simple_spinner_dropdown_item);
+        var boardDao = Room.databaseBuilder(this, CawfeeDatabase.class, "boards").build().boardDao();
+        var spinner = (Spinner) binding.toolbar.findViewById(R.id.spinner);
+        var adapter = new ArrayAdapter<String>(this, support_simple_spinner_dropdown_item);
 
         // Fetch the board list from the db, needs to be on a separate thread
         disposable.add(
             boardDao.getAllBoards()
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(
-                        boards -> {
-                            adapter.addAll(
-                                boards.stream()
-                                      .map(Board::getBoard)
-                                      .collect(Collectors.toList()));
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                    boards -> {
+                        if (boards.size() > 0) {
+                            adapter.addAll(boards.stream()
+                                .map(Board::getBoard)
+                                .collect(Collectors.toList()));
+                        } else {
+                            DaggerImageBoardMap.create().imageBoardMap().forEach(
+                                (siteName, imageBoard) -> {
+                                    imageBoard.boards()
+                                        .ifPresent(
+                                            boardList -> {
+                                                boardDao.insertAll(boardList.getBoards());
+                                                adapter.addAll(boardList.getBoards().stream().map(Board::getBoard).collect(Collectors.toList()));
+                                            });
+                                }
+                            );
                         }
-                    ));
-        //        disposable.add(
-        //            Observable.defer(() -> Observable.just(boardDao.getAllBoards()))
-        //                      .subscribeOn(Schedulers.io())
-        //                      .observeOn(AndroidSchedulers.mainThread())
-        //                      .subscribe(boards -> {
-        //                          adapter.addAll(
-        //                              boards.stream()
-        //                                    .map(Board::getBoard)
-        //                                    .collect(Collectors.toList()));
-        //                      }));
+                    }
+                ));
 
         spinner.setAdapter(adapter);
         spinner.setPrompt("boards");
@@ -88,21 +93,22 @@ public final class MainActivity extends AppCompatActivity {
         return true;
     }
 
-    @Override public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         final var id = item.getItemId();
 
         // return true if we navigate somewhere
         if (id == R.id.menu_main_site_settings) {
             startActivity(new Intent(this, SitePreferencesActivity.class));
-        }
-        else {
+        } else {
             return super.onOptionsItemSelected(item);
         }
 
         return true;
     }
 
-    @Override protected void onDestroy() {
+    @Override
+    protected void onDestroy() {
         super.onDestroy();
         disposable.dispose();
         binding = null;

@@ -113,8 +113,9 @@ public final class SitePreferencesAdapter extends ArrayAdapter<ImageBoard> {
             dialog.show();
         });
 
-        holder.itemToggle.setOnCheckedChangeListener((__, switchState) -> {
-            if (switchState) {
+        holder.itemToggle.setChecked(preferenceManager.isSiteEnabled(imageBoard.name()));
+        holder.itemToggle.setOnCheckedChangeListener((__, checked) -> {
+            if (checked) {
                 preferenceManager.enableSite(imageBoard.name());
             } else {
                 preferenceManager.disableSite(imageBoard.name());
